@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import '@typechain/hardhat'
 import '@nomiclabs/hardhat-ethers'
 import '@nomiclabs/hardhat-waffle'
@@ -7,8 +6,8 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-const mnemnoc =
-	typeof process.env.MNEMONIC === 'undefined' ? '' : process.env.MNEMONIC
+const privateKey =
+	typeof process.env.PRIVATE_KEY === 'undefined' ? '' : process.env.PRIVATE_KEY
 
 const config = {
 	solidity: {
@@ -21,25 +20,13 @@ const config = {
 		},
 	},
 	networks: {
-		rinkeby: {
-			url: `https://eth-rinkeby.alchemyapi.io/v2/${process.env.ARCHEMY_KEY!}`,
-			gas: 4712388,
-			accounts: {
-				mnemonic: mnemnoc,
-			},
+		shibuya: {
+			url: `https://evm.shibuya.astar.network`,
+			accounts: [privateKey],
 		},
-		polygonMumbai: {
-			url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env
-				.ARCHEMY_KEY!}`,
-			accounts: {
-				mnemonic: mnemnoc,
-			},
-		},
-	},
-	etherscan: {
-		apiKey: {
-			rinkeby: process.env.ETHERSCAN_API_KEY!,
-			polygonMumbai: process.env.POLYGONSCAN_API_KEY!,
+		astar: {
+			url: `https://rpc.astar.network:8545`,
+			accounts: [privateKey],
 		},
 	},
 }

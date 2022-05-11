@@ -3,24 +3,31 @@ import { ethers } from 'hardhat'
 import { constants } from 'ethers'
 import { solidity } from 'ethereum-waffle'
 import { deploy, deployProxy, makeSnapshot, resetChain } from './utils'
-import { ExampleToken, Admin, UpgradeableProxy } from '../typechain-types'
+import { AnyswapV6ERC20, Admin, UpgradeableProxy } from '../typechain-types'
 
 use(solidity)
 
 describe('Admin', () => {
 	let proxy: UpgradeableProxy
-	let exampleToken: ExampleToken
-	let proxified: ExampleToken
+	let exampleToken: AnyswapV6ERC20
+	let proxified: AnyswapV6ERC20
 	let admin: Admin
 	let snapshot: string
 
 	before(async () => {
 		const data = ethers.utils.arrayify('0x')
-		exampleToken = await deploy<ExampleToken>('ExampleToken')
+		exampleToken = await deploy<AnyswapV6ERC20>('AnyswapV6ERC20')
 		admin = await deploy<Admin>('Admin')
 		proxy = await deployProxy(exampleToken.address, admin.address, data)
 		proxified = exampleToken.attach(proxy.address)
-		await proxified.initialize()
+		const [owner] = await ethers.getSigners()
+		await proxified.initialize(
+			'name',
+			'symbol',
+			18,
+			ethers.constants.AddressZero,
+			owner.address
+		)
 	})
 	beforeEach(async () => {
 		snapshot = await makeSnapshot()
@@ -33,7 +40,7 @@ describe('Admin', () => {
 		describe('success', () => {
 			it('upgrade logic contract', async () => {
 				const impl1 = await admin.getProxyImplementation(proxy.address)
-				const nextImpl = await deploy<ExampleToken>('ExampleToken')
+				const nextImpl = await deploy<AnyswapV6ERC20>('AnyswapV6ERC20')
 				await admin.upgrade(proxy.address, nextImpl.address)
 				const impl2 = await admin.getProxyImplementation(proxy.address)
 				expect(impl1).to.not.equal(impl2)
@@ -43,7 +50,7 @@ describe('Admin', () => {
 		})
 		describe('fail', () => {
 			it('should fail to upgrade when the caller is not admin', async () => {
-				const nextImpl = await deploy<ExampleToken>('ExampleToken')
+				const nextImpl = await deploy<AnyswapV6ERC20>('AnyswapV6ERC20')
 				const [, addr1] = await ethers.getSigners()
 				await expect(
 					admin.connect(addr1).upgrade(proxy.address, nextImpl.address)

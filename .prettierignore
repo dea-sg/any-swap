@@ -4,3 +4,4 @@ typechain
 artifacts/
 typechain-types/
 cache/
+contracts/AnyswapV6ERC20.sol
