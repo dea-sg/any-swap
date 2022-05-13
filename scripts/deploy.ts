@@ -48,3 +48,11 @@ main()
 // npx hardhat flatten contracts/AnyswapV6ERC20.sol  > cache/AnyswapV6ERC20.sol
 // npx hardhat flatten contracts/Admin.sol  > cache/Admin.sol
 // npx hardhat flatten contracts/UpgradeableProxy.sol  > cache/UpgradeableProxy.sol
+
+// token
+// https://astar.subscan.io/account/0xF688573D7B154DEc538234CBd2D8e3f0fdadeAd6?tab=extrinsic
+
+// admin
+// https://astar.subscan.io/account/0xcCb3F56AA3e998ee6A662EA822DCd3238C002933
+
+// proxy 0x0999E8267A09d41A5a76605e3d01aE95FAfb58F4
